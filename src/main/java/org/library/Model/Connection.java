@@ -8,17 +8,21 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.library.Impl.ConstantValues;
 import org.library.Impl.DatabaseClient;
 
+import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -87,10 +91,30 @@ public class Connection {
             System.out.println("amnb");
         }
 
-        LibraryBook book=Database.getBook(2231);
+        /*LibraryBook book=Database.getBook(2231);
         Bson b=and(eq("student_id","6660"),eq("book_id","2231"));
         Iterable<BookBorrow> bookBorrow=Database.getBookBorrowRecords();
-        book.decrementCopies();
+        book.decrementCopies();*/
+
+        Bson b=eq("student_id",4425);
+        Bson set= Updates.set("phone","009999000011");
+        //Database.STUDENT_COLLECTION.findOneAndUpdate(b,set);
+        System.out.println(Database.STUDENT_COLLECTION.find(b).first().getPhone());
+
+        Date dateAfter=new Date(System.currentTimeMillis());
+        //Date dateBefore = new Date(System.currentTimeMillis()- 4 * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
+        Date dateBefore = new Date(System.currentTimeMillis()- 1 * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
+
+        long dateBeforeInMs = dateBefore.getTime();
+        long dateAfterInMs = dateAfter.getTime();
+        if(dateAfterInMs>dateBeforeInMs){
+            long timeDiff = dateAfterInMs - dateBeforeInMs;
+            long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+            System.out.println(dateBeforeInMs+" "+dateAfterInMs+" "+timeDiff+" "+daysDiff);
+            System.out.println(daysDiff);
+        }
+
+        System.out.println(dateAfter);
     }
 
 
@@ -166,3 +190,7 @@ public class Connection {
                 //.append("Date", new Timestamp(System.currentTimeMillis()))
                 .append("Date",new Timestamp(System.currentTimeMillis()))
                 .append("Deadline",dt.toString());*/
+
+/*Timer time = new Timer(); // Instantiate Timer Object
+        ScheduledUpdate st = new ScheduledUpdate(); // Instantiate SheduledTask class
+        time.schedule(st, 0, 180000);*/

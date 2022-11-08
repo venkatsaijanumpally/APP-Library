@@ -27,33 +27,25 @@ public class BookBorrow {
 
     public BookBorrow(){}
 
-    public BookBorrow(int id, int book_id){
-        this.id=id;
-        this.book_id=book_id;
-        book = Database.getBook(book_id);
-        if(!book.available())
-            throw new BookCopiesNotAvailable();
+    public BookBorrow(Map<String,String> attributes){
+        this.id=Integer.parseInt(attributes.get(ConstantValues.BOOK_BORROW_STUDENT_ID_JSON_LABEL));
+        this.book_id=Integer.parseInt(attributes.get(ConstantValues.BOOK_BORROW_BOOK_ID_JSON_LABEL));
+        book = Catalog.getBook(book_id);
+        validateBookBorrowAttributes(book,book_id,id);
         book.decrementCopies();
         startDate = new Date(System.currentTimeMillis());
-        endDate = new Date(System.currentTimeMillis()+ 5 * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
+        if(attributes.containsKey(ConstantValues.BOOK_BORROW_DAYS_JSON_LABEL))
+            endDate = new Date(System.currentTimeMillis()+ Math.max(1,Integer.parseInt(attributes.get(ConstantValues.BOOK_BORROW_DAYS_JSON_LABEL))) * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
+        else
+            endDate = new Date(System.currentTimeMillis()+ 5 * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
         Database.insertBookBorrowRecord(this);
     }
 
-    public BookBorrow(Map<String,String> attributes){
-        this.id=Integer.parseInt(attributes.get("id"));
-        this.book_id=Integer.parseInt(attributes.get("book_id"));
-        book = Database.getBook(book_id);
+    private void validateBookBorrowAttributes(LibraryBook book, int book_id, int id) {
+        System.out.println(book);
         if(!Student.studentExist(id)) throw new BookBorrowStudentDoesNotExist();
         if(book==null || !book.available()) throw new BookCopiesNotAvailable();
         if(checkIfStudentHasRecord(id,book_id)) throw new BookAlreadyBorrowed();
-        book.decrementCopies();
-        startDate = new Date(System.currentTimeMillis());
-        if(attributes.containsKey("days"))
-            endDate = new Date(System.currentTimeMillis()+ Math.max(1,Integer.parseInt(attributes.get("days"))) * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
-        else
-            endDate = new Date(System.currentTimeMillis()+ 5 * ConstantValues.BOOK_BORROW_MILLIS_IN_A_DAY);
-        //System.out.println(id+" "+book_id+" "+startDate+"  "+endDate);
-        Database.insertBookBorrowRecord(this);
     }
 
     public int getId() {

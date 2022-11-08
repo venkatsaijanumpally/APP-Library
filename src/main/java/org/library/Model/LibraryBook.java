@@ -1,30 +1,31 @@
 package org.library.Model;
 
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.library.Impl.ConstantValues;
 
 import java.util.Map;
 
 public class LibraryBook implements LibraryItem,Book {
 
-    @BsonProperty(value = "book_title")
+    @BsonProperty(value = ConstantValues.LIBRARY_BOOK_BOOK_TITLE_LABEL)
     String bookTitle;
 
-    @BsonProperty(value = "book_id")
+    @BsonProperty(value = ConstantValues.LIBRARY_BOOK_BOOK_ID_LABEL)
     String bookId;
 
-    @BsonProperty(value = "author")
+    @BsonProperty(value = ConstantValues.LIBRARY_BOOK_BOOK_AUTHOR_LABEL)
     String author;
 
-    @BsonProperty(value = "copies")
+    @BsonProperty(value = ConstantValues.LIBRARY_BOOK_BOOK_COPIES_LABEL)
     private int copies;
 
     public LibraryBook(){ }
 
     public LibraryBook(Map<String,String> attributes){
-        bookTitle=attributes.get("book_title");
-        bookId=attributes.get("book_id");
-        author=attributes.get("author");
-        copies=Integer.parseInt(attributes.get("copies"));
+        bookTitle=attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_TITLE_JSON_LABEL);
+        bookId=attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_ID_JSON_LABEL);
+        author=attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_AUTHOR_JSON_LABEL);
+        copies=Integer.parseInt(attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_COPIES_JSON_LABEL));
         Database.addBook(this);
     }
 
@@ -42,12 +43,16 @@ public class LibraryBook implements LibraryItem,Book {
         return copies>0;
     }
 
+    @Override
     public void decrementCopies(){
         Database.updateCopiesOfBook(bookId,copies-1);
+        --copies;
     }
 
+    @Override
     public void incrementCopies(){
         Database.updateCopiesOfBook(bookId,copies+1);
+        ++copies;
     }
 
     public int getCopies() {

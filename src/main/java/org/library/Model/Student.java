@@ -1,12 +1,15 @@
 package org.library.Model;
 
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.library.Impl.ConstantValues;
 import org.library.Exception.StudentBorrowRecordExist;
 import org.library.Exception.StudentDoesNotExist;
 import org.library.Exception.StudentExistException;
 
+import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class Student {
 
@@ -25,25 +28,20 @@ public class Student {
     @BsonProperty(value = ConstantValues.STUDENT_PHONE_LABEL)
     private String phone;
 
+    @BsonProperty(value = ConstantValues.STUDENT_DUE_AMOUNT_LABEL)
+    private int due_amount;
+
     public Student(){}
 
-    public Student(int id, Status status, String email, String program, String phone){
-        this.id = id;
-        this.status=status;
-        this.email=email;
-        this.program=program;
-        this.phone=phone;
-        Database.insertStudent(this.id,status,email,program,phone);
-    }
-
     public Student(Map<String,String> attributes) {
-        id =Integer.parseInt(attributes.get("id"));
+        id =Integer.parseInt(attributes.get(ConstantValues.STUDENT_ID_JSON_LABEL));
         if(Database.studentExist(id))
             throw new StudentExistException();
-        this.status= Status.valueOf(attributes.get("status"));
-        this.email=attributes.get("email");
-        this.program=attributes.get("program");
-        this.phone=attributes.get("phone");
+        this.status= Status.valueOf(attributes.get(ConstantValues.STUDENT_STATUS_JSON_LABEL));
+        this.email=attributes.get(ConstantValues.STUDENT_EMAIL_JSON_LABEL);
+        this.program=attributes.get(ConstantValues.STUDENT_PROGRAM_JSON_LABEL);
+        this.phone=attributes.get(ConstantValues.STUDENT_PHONE_JSON_LABEL);
+        due_amount=0;
         Database.insertStudent(this);
     }
 
@@ -53,6 +51,8 @@ public class Student {
 
     public void setId(int id) {
         this.id = id;
+        //updateDueAmount();
+        //Database.updateStudentDue(this);
     }
 
     public Status getStatus() {
@@ -87,8 +87,12 @@ public class Student {
         this.program = program;
     }
 
-    public static void loanBooks(int id, int book){
-        Database.insertBookBorrowRecord(id,book);
+    public int getDue_amount() {
+        return due_amount;
+    }
+
+    public void setDue_amount(int due_amount) {
+        this.due_amount = due_amount;
     }
 
     public static Iterable<Student> getStudents() {
@@ -105,5 +109,23 @@ public class Student {
 
     public static boolean studentExist(int id){
         return Database.studentExist(id);
+    }
+
+    public void updateDueAmount() {
+        Iterable<BookBorrow> records=Database.allBorrowedBookRecordsOfAStudent(id);
+        PricingStrategy pricingStrategy=Catalog.getPricingStrategy();
+        Date dateAfter=new Date(System.currentTimeMillis());
+        int due=0;
+        for(BookBorrow record: records){
+            Date dateBefore=record.getEndDate();
+            long dateBeforeInMs = dateBefore.getTime();
+            long dateAfterInMs = dateAfter.getTime();
+            if(dateAfterInMs>dateBeforeInMs){
+                long timeDiff = dateAfterInMs - dateBeforeInMs;
+                long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+                due+=daysDiff;
+            }
+        }
+        due_amount=pricingStrategy.getPerDayCost()*due;
     }
 }

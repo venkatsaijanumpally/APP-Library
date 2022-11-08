@@ -2,6 +2,7 @@ package org.library.Model;
 
 import static com.mongodb.client.model.Filters.*;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -15,6 +16,7 @@ import org.library.Impl.DatabaseClient;
 import static com.mongodb.client.model.Updates.*;
 
 import java.util.Date;
+import java.util.List;
 
 public class Database {
 
@@ -23,6 +25,7 @@ public class Database {
     public static final MongoCollection<Student> STUDENT_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.STUDENT_COLLECTION_NAME, Student.class);
     public static final MongoCollection<BookBorrow> BOOK_BORROW_RECORDS = LIBRARY_DB.getCollection(ConstantValues.BOOK_BORROW_COLLECTION_NAME, BookBorrow.class);
     public static final MongoCollection<LibraryBook> BOOK_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.BOOK_COLLECTION, LibraryBook.class);
+    public static final MongoCollection<PricingStrategy> PRICING_STRATEGY_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.PRICING_STRATEGY_COLLECTION, PricingStrategy.class);
 
     public static void insertStudent(int id, Status status, String email, String program, String phone){
         MongoCollection<Document> StudentCollection= LIBRARY_DB.getCollection("students_1");
@@ -78,6 +81,11 @@ public class Database {
         return STUDENT_COLLECTION.findOneAndDelete(equalComparator);
     }
 
+    public static Iterable<BookBorrow> allBorrowedBookRecordsOfAStudent(int id){
+        Bson equalComparator=eq(ConstantValues.BOOK_BORROW_STUDENT_ID_LABEL,id);
+        return BOOK_BORROW_RECORDS.find(equalComparator);
+    }
+
     public static boolean checkIfStudentBorrowed(int id) {
         Bson equalComparator=eq(ConstantValues.BOOK_BORROW_STUDENT_ID_LABEL,id);
         return BOOK_BORROW_RECORDS.find(equalComparator).first()!=null;
@@ -110,7 +118,22 @@ public class Database {
 
     public static void updateCopiesOfBook(String bookId, int updatedCopies) {
         Bson equalComparator=eq(ConstantValues.LIBRARY_BOOK_ID_LABEL,String.valueOf(bookId));
-        Bson set=set("copies",updatedCopies);
+        Bson set=set(ConstantValues.LIBRARY_BOOK_BOOK_COPIES_LABEL,updatedCopies);
         BOOK_COLLECTION.updateOne(equalComparator,set);
+    }
+
+    public static PricingStrategy getPricingStrategy() {
+        return PRICING_STRATEGY_COLLECTION.find().first();
+    }
+
+    public static void updatePricingStrategy(PricingStrategy pricingStrategy) {
+        PRICING_STRATEGY_COLLECTION.deleteMany(new BasicDBObject());
+        PRICING_STRATEGY_COLLECTION.insertOne(pricingStrategy);
+    }
+
+    public static void updateStudentDue(Student student) {
+        Bson equalComparator=eq(ConstantValues.STUDENT_ID_LABEL,student.getId());
+        Bson set=set(ConstantValues.STUDENT_DUE_AMOUNT_LABEL, student.getDue_amount());
+        STUDENT_COLLECTION.updateOne(equalComparator,set);
     }
 }

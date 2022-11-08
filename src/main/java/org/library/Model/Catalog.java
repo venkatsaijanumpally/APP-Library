@@ -5,24 +5,43 @@ import java.util.HashMap;
 public class Catalog {
 
     private static int BookCount;
-    public static HashMap<Integer,String> BookTitles = new HashMap<>();
+    public static HashMap<Integer,LibraryBook> Books = new HashMap<>();
+    private static PricingStrategy pricingStrategy;
 
     static {
-
+        addBooks();
+        BookCount= Books.size();
+        PricingStrategy currentStrategy=Database.getPricingStrategy();
+        if(currentStrategy!=null)
+            pricingStrategy=currentStrategy;
+        else {
+            pricingStrategy=new SinglePricingStrategy();
+            Database.updatePricingStrategy(pricingStrategy);
+        }
     }
 
-    public static void addBook(int book_id, String title){
-        BookTitles.put(book_id,title);
+    private static void addBooks() {
+        for(LibraryBook book: LibraryBook.getBooks()){
+            Books.put(Integer.parseInt(book.getBookId()),book);
+        }
+    }
+
+    public static LibraryBook getBook(int book_id){
+        return Books.get(book_id);
+    }
+
+    public static void addBook(int book_id, LibraryBook book){
+        Books.put(book_id,book);
         BookCount++;
     }
 
     public static void removeBook(int book_id){
-        BookTitles.remove(book_id);
+        Books.remove(book_id);
         BookCount--;
     }
 
-    public static HashMap<Integer,String> getBookTitles(){
-        return BookTitles;
+    public static HashMap<Integer,LibraryBook> getBooks(){
+        return Books;
     }
 
     public static int getBookCount() {
@@ -33,7 +52,14 @@ public class Catalog {
         BookCount = bookCount;
     }
 
-    public static void setBookTitles(HashMap<Integer, String> bookTitles) {
-        BookTitles = bookTitles;
+    public static void updatePricingStrategy(int strategy){
+        if(strategy == pricingStrategy.getPerDayCost())
+            return;
+        pricingStrategy=strategy==1?new SinglePricingStrategy():new DoublePricingStrategy();
+        Database.updatePricingStrategy(pricingStrategy);
+    }
+
+    public static PricingStrategy getPricingStrategy() {
+        return pricingStrategy;
     }
 }
