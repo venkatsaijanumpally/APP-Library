@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
+import org.library.Impl.BookHandler;
 import org.library.Impl.StudentBorrowDenyHandler;
 import org.library.Impl.StudentBorrowHandler;
 import org.library.Impl.StudentHandler;
@@ -48,6 +49,8 @@ public class Application {
         server.createContext("/student/borrow", new StudentBorrowHandler());
 
         server.createContext("/student/borrow/deny", new StudentBorrowDenyHandler());
+
+        server.createContext("/book", new BookHandler());
 
         server.setExecutor(null); // creates a default executor
         server.start();

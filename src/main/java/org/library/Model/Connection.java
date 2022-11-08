@@ -11,6 +11,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.library.Impl.DatabaseClient;
@@ -19,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -73,9 +75,22 @@ public class Connection {
         Iterable<BookBorrow> borrowRecords= getBookBorrowRecords();
         //Iterable<BookBorrow> list=new ArrayList<>();
         for (BookBorrow b:borrowRecords){
-            if(b.book_id==6623)
-                borrowRecords.iterator().remove();
+            //if(b.book_id==6623)
+                //borrowRecords.iterator().remove();
         }
+
+        Map<String,String> map=new HashMap<>();
+        try {
+            //int x=Integer.parseInt(map.get("ab"));
+        }
+        catch (Exception e){
+            System.out.println("amnb");
+        }
+
+        LibraryBook book=Database.getBook(2231);
+        Bson b=and(eq("student_id","6660"),eq("book_id","2231"));
+        Iterable<BookBorrow> bookBorrow=Database.getBookBorrowRecords();
+        book.decrementCopies();
     }
 
 

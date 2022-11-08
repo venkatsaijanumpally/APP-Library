@@ -15,31 +15,13 @@ import org.library.Model.Student;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class BaseMarshalling<T> {
-
-    public static ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    public int responseLength;
     private String result="";
-
-    public OutputStream objectListToStream(Iterable<Student> listOfStudent, OutputStream os) throws IOException {
-        StringBuilder resultString=new StringBuilder();
-        for(Student student: listOfStudent){
-            resultString.append(objectWriter.writeValueAsString(student));
-        }
-        String result= resultString.toString();
-        System.out.println(result);
-        responseLength = result.getBytes().length;
-        os.write(result.getBytes());
-        return os;
-    }
-
-    public int getResponseLength(){
-        return responseLength;
-    }
 
     public int getResponseLength(Iterable<T> listOfObjects, String type) {
         JSONObject jsonObject=new JSONObject();
@@ -49,6 +31,12 @@ public class BaseMarshalling<T> {
         }
         jsonObject.put(type,jsonArray);
         result=jsonObject.toString();
+        return result.getBytes().length;
+    }
+
+    public int getResponseLength(T object) {
+        JSONObject jsonObject=new JSONObject(object);
+        result = jsonObject.toString();
         return result.getBytes().length;
     }
 

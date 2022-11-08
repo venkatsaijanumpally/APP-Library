@@ -1,25 +1,28 @@
 package org.library.Model;
 
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.library.Impl.ConstantValues;
+import org.library.Exception.StudentBorrowRecordExist;
+import org.library.Exception.StudentDoesNotExist;
+import org.library.Exception.StudentExistException;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class Student {
 
-    @BsonProperty(value = "student_id")
+    @BsonProperty(value = ConstantValues.STUDENT_ID_LABEL)
     int id;
 
-    @BsonProperty(value = "status")
+    @BsonProperty(value = ConstantValues.STUDENT_STATUS_LABEL)
     private Status status;
 
-    @BsonProperty(value = "email")
+    @BsonProperty(value = ConstantValues.STUDENT_EMAIL_LABEL)
     private String email;
 
-    @BsonProperty(value = "program")
+    @BsonProperty(value = ConstantValues.STUDENT_PROGRAM_LABEL)
     private String program;
 
-    @BsonProperty(value = "phone")
+    @BsonProperty(value = ConstantValues.STUDENT_PHONE_LABEL)
     private String phone;
 
     public Student(){}
@@ -33,8 +36,10 @@ public class Student {
         Database.insertStudent(this.id,status,email,program,phone);
     }
 
-    public Student(Map<String,String> attributes){
+    public Student(Map<String,String> attributes) {
         id =Integer.parseInt(attributes.get("id"));
+        if(Database.studentExist(id))
+            throw new StudentExistException();
         this.status= Status.valueOf(attributes.get("status"));
         this.email=attributes.get("email");
         this.program=attributes.get("program");
@@ -88,5 +93,17 @@ public class Student {
 
     public static Iterable<Student> getStudents() {
         return Database.getListOfStudent();
+    }
+
+    public static Student deleteStudent(int id) {
+        if(!studentExist(id))
+            throw new StudentDoesNotExist();
+        else if(BookBorrow.checkIfStudentHasRecord(id))
+            throw new StudentBorrowRecordExist();
+        return Database.deleteStudent(id);
+    }
+
+    public static boolean studentExist(int id){
+        return Database.studentExist(id);
     }
 }

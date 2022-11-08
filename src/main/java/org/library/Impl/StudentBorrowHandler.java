@@ -11,30 +11,47 @@ import java.util.Map;
 public class StudentBorrowHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if("POST".equals(exchange.getRequestMethod())){
-            String respText = "Book Borrowed";
-            exchange.sendResponseHeaders(200, respText.getBytes().length);
-            //Map<String,String> params=queryToMap(exchange.getRequestURI().getQuery());
-            //Student.loanBooks(Integer.parseInt(params.get("id")),Integer.parseInt(params.get("book")));
-            Map<String,String> attributes=BaseUnMarshalling.parse(exchange.getRequestBody());
-            new BookBorrow(attributes);
-
-            OutputStream output = exchange.getResponseBody();
-            output.write(respText.getBytes());
-            output.flush();
-            exchange.close();
+        try{
+            if("POST".equals(exchange.getRequestMethod())){
+                String respText = "Book Borrowed";
+                Map<String,String> attributes=BaseUnMarshalling.parse(exchange.getRequestBody());
+                new BookBorrow(attributes);
+                exchange.sendResponseHeaders(200, respText.getBytes().length);
+                OutputStream output = exchange.getResponseBody();
+                output.write(respText.getBytes());
+                output.flush();
+                exchange.close();
+            }
+            else if("GET".equals(exchange.getRequestMethod())){
+                Iterable<BookBorrow> bookBorrowIterable=BookBorrow.getBookBorrowRecords();
+                BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
+                exchange.getResponseHeaders().set("Content-Type","application/json");
+                exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowIterable, "Records"));
+                OutputStream os=bs.getOutputStream(exchange.getResponseBody());
+                os.flush();
+                exchange.close();
+            }
+            else if("DELETE".equals(exchange.getRequestMethod())){
+                Map<String,String> attributes=BaseUnMarshalling.parse(exchange.getRequestBody());
+                BookBorrow bookBorrowRecord=BookBorrow.deleteRecord(Integer.parseInt(attributes.get("id")),Integer.parseInt(attributes.get("book_id")));
+                BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
+                exchange.getResponseHeaders().set("Content-Type","application/json");
+                exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowRecord));
+                OutputStream os=bs.getOutputStream(exchange.getResponseBody());
+                os.flush();
+                exchange.close();
+            }
+            else {
+                exchange.sendResponseHeaders(405,-1);
+            }
         }
-        else if("GET".equals(exchange.getRequestMethod())){
-            Iterable<BookBorrow> bookBorrowIterable=BookBorrow.getBookBorrowRecords();
-            BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
+        catch (Exception e){
             exchange.getResponseHeaders().set("Content-Type","application/json");
-            exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowIterable, "Records"));
-            OutputStream os=bs.getOutputStream(exchange.getResponseBody());
+            ExceptionHandler exceptionHandler=new ExceptionHandler(e);
+            exchange.sendResponseHeaders(exceptionHandler.getErrorCode(), exceptionHandler.getResponseLength());
+            OutputStream os=exceptionHandler.getResponseStream(exchange.getResponseBody());
             os.flush();
             exchange.close();
-        }
-        else {
-            exchange.sendResponseHeaders(405,-1);
         }
     }
 }
