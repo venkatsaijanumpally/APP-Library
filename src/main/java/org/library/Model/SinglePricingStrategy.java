@@ -1,5 +1,9 @@
 package org.library.Model;
 
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+
+//@BsonDiscriminator(value = "Single",key = "_t")
+@BsonDiscriminator
 public class SinglePricingStrategy implements PricingStrategy {
     private final int COST_PER_DAY = 1;
 

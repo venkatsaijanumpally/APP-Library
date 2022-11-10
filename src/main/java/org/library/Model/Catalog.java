@@ -52,6 +52,10 @@ public class Catalog {
         BookCount = bookCount;
     }
 
+    public static void setPricingStrategy(PricingStrategy pricingStrategy) {
+        Catalog.pricingStrategy = pricingStrategy;
+    }
+
     public static void updatePricingStrategy(int strategy){
         if(strategy == pricingStrategy.getPerDayCost())
             return;

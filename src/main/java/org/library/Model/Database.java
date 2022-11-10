@@ -136,4 +136,9 @@ public class Database {
         Bson set=set(ConstantValues.STUDENT_DUE_AMOUNT_LABEL, student.getDue_amount());
         STUDENT_COLLECTION.updateOne(equalComparator,set);
     }
+
+    public static void deleteBook(String book_id){
+        Bson equalComparator=eq(ConstantValues.LIBRARY_BOOK_ID_LABEL,book_id);
+        BOOK_COLLECTION.deleteOne(equalComparator);
+    }
 }

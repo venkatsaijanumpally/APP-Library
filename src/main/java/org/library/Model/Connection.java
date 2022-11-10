@@ -194,3 +194,27 @@ public class Connection {
 /*Timer time = new Timer(); // Instantiate Timer Object
         ScheduledUpdate st = new ScheduledUpdate(); // Instantiate SheduledTask class
         time.schedule(st, 0, 180000);*/
+
+/*@Test
+    public void testStudentDeleteApi() throws IOException {
+
+        JSONObject json=getStudentDeleteJson();
+        HttpResponse response = performJsonRequest("student", json);
+        Assert.assertEquals(response.getStatusLine().getStatusCode(),200);
+
+        JSONObject deleteJson=getStudentDeleteJson();
+
+        if(Student.studentExist(8822))
+            Student.deleteStudent(8822);
+        httpClient.close();
+    }*/
+
+
+/*public HttpResponse performJsonDeleteRequest(String context, JSONObject json) throws IOException {
+        httpClient = HttpClientBuilder.create().build();
+        HttpDelete request = new HttpDelete("http://localhost:8000/" + context);
+        StringEntity params = new StringEntity(json.toString());
+        request.addHeader("content-type", "application/json");
+        request.setEntity(params);
+        return httpClient.execute(request);
+    }*/

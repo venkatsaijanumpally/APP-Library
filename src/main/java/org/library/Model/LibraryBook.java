@@ -27,6 +27,7 @@ public class LibraryBook implements LibraryItem,Book {
         author=attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_AUTHOR_JSON_LABEL);
         copies=Integer.parseInt(attributes.get(ConstantValues.LIBRARY_BOOK_BOOK_COPIES_JSON_LABEL));
         Database.addBook(this);
+        Catalog.addBook(Integer.parseInt(bookId),this);
     }
 
     public static Iterable<LibraryBook> getBooks() {
