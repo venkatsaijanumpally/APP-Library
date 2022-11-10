@@ -81,7 +81,7 @@ export const AppLayout = () => {
                                     color: "white",
                                 }}
                             >
-                                Library Management System
+                                LIBRARY MANAGEMENT PORTAL
                             </Typography>
                         </Link>
                         <Box
