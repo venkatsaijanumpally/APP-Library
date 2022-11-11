@@ -5,13 +5,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class ExceptionHandler {
+public class ExceptionResolver {
 
     private String responseJson;
     public int errorCode;
     public int responseLength;
 
-    public ExceptionHandler(Exception exception){
+    public ExceptionResolver(Exception exception){
         if(exception instanceof RuntimeException){
             errorCode=400;
         }
