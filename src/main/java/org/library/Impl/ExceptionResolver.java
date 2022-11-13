@@ -8,8 +8,8 @@ import java.io.OutputStream;
 public class ExceptionResolver {
 
     private String responseJson;
-    public int errorCode;
-    public int responseLength;
+    private int errorCode;
+    private int responseLength;
 
     public ExceptionResolver(Exception exception){
         if(exception instanceof RuntimeException){

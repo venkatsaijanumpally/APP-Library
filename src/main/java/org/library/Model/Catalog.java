@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Catalog {
 
     private static int BookCount;
-    public static HashMap<Integer,LibraryBook> Books = new HashMap<>();
+    private static HashMap<Integer,LibraryBook> Books = new HashMap<>();
     private static PricingStrategy pricingStrategy;
 
     static {

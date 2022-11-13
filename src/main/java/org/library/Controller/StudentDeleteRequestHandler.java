@@ -16,7 +16,6 @@ public class StudentDeleteRequestHandler implements HttpHandler {
         Map<String,String> attributes= BaseUnMarshalling.parse(exchange.getRequestBody());
         BaseMarshalling<Student> bs= new BaseMarshalling<>();
         Student deletedStudent=Student.deleteStudent(Integer.parseInt(attributes.get("id")));
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(200, bs.getResponseLength(deletedStudent));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();

@@ -1,31 +1,28 @@
 package org.library.Model;
 
-import static com.mongodb.client.model.Filters.*;
-
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.library.Impl.ConstantValues;
 import org.library.Impl.DatabaseClient;
-import static com.mongodb.client.model.Updates.*;
 
 import java.util.Date;
-import java.util.List;
+
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.set;
 
 public class Database {
 
-    public static final MongoClient MONGO_CLIENT = DatabaseClient.getInstance();
-    public static final MongoDatabase LIBRARY_DB = MONGO_CLIENT.getDatabase(ConstantValues.DATABASE_NAME);
-    public static final MongoCollection<Student> STUDENT_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.STUDENT_COLLECTION_NAME, Student.class);
-    public static final MongoCollection<BookBorrow> BOOK_BORROW_RECORDS = LIBRARY_DB.getCollection(ConstantValues.BOOK_BORROW_COLLECTION_NAME, BookBorrow.class);
-    public static final MongoCollection<LibraryBook> BOOK_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.BOOK_COLLECTION, LibraryBook.class);
-    public static final MongoCollection<PricingStrategy> PRICING_STRATEGY_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.PRICING_STRATEGY_COLLECTION, PricingStrategy.class);
+    private static final MongoClient MONGO_CLIENT = DatabaseClient.getInstance();
+    private static final MongoDatabase LIBRARY_DB = MONGO_CLIENT.getDatabase(ConstantValues.DATABASE_NAME);
+    private static final MongoCollection<Student> STUDENT_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.STUDENT_COLLECTION_NAME, Student.class);
+    private static final MongoCollection<BookBorrow> BOOK_BORROW_RECORDS = LIBRARY_DB.getCollection(ConstantValues.BOOK_BORROW_COLLECTION_NAME, BookBorrow.class);
+    private static final MongoCollection<LibraryBook> BOOK_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.BOOK_COLLECTION, LibraryBook.class);
+    private static final MongoCollection<PricingStrategy> PRICING_STRATEGY_COLLECTION = LIBRARY_DB.getCollection(ConstantValues.PRICING_STRATEGY_COLLECTION, PricingStrategy.class);
 
     public static void insertStudent(int id, Status status, String email, String program, String phone){
         MongoCollection<Document> StudentCollection= LIBRARY_DB.getCollection("students_1");

@@ -13,7 +13,6 @@ public class LibraryBookViewRequestHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         Iterable<LibraryBook> books=LibraryBook.getBooks();
         BaseMarshalling<LibraryBook> bs= new BaseMarshalling<>();
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(200, bs.getResponseLength(books, "Books"));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();

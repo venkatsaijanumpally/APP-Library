@@ -14,7 +14,6 @@ public class BookPricingViewRequestHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         PricingStrategy pricingStrategy= Catalog.getPricingStrategy();
         BaseMarshalling<PricingStrategy> bs= new BaseMarshalling<>();
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(200, bs.getResponseLength(pricingStrategy));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();

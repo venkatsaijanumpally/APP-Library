@@ -11,7 +11,6 @@ public class ExceptionHandler implements HttpHandler {
     ExceptionResolver exceptionResolver;
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(exceptionResolver.getErrorCode(), exceptionResolver.getResponseLength());
         OutputStream os= exceptionResolver.getResponseStream(exchange.getResponseBody());
         os.flush();

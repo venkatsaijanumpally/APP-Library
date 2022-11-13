@@ -13,7 +13,6 @@ public class StudentBookBorrowingHistoryViewRequestHandler implements HttpHandle
     public void handle(HttpExchange exchange) throws IOException {
         Iterable<BookBorrow> bookBorrowIterable=BookBorrow.getBookBorrowRecords();
         BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowIterable, "Records"));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();

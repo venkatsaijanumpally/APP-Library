@@ -16,7 +16,6 @@ public class StudentBookReturnRequestHandler implements HttpHandler {
         Map<String,String> attributes= BaseUnMarshalling.parse(exchange.getRequestBody());
         BookBorrow bookBorrowRecord=BookBorrow.deleteRecord(Integer.parseInt(attributes.get("id")),Integer.parseInt(attributes.get("book_id")));
         BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
-        exchange.getResponseHeaders().set("Content-Type","application/json");
         exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowRecord));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();
