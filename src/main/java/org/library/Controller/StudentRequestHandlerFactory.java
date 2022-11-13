@@ -10,7 +10,7 @@ import java.util.Map;
 public class StudentRequestHandlerFactory {
     private final Map<String, HttpHandler> studentRequestMethodToHandlerMap = new HashMap<>();
     public StudentRequestHandlerFactory() {
-        studentRequestMethodToHandlerMap.put("POST", new Student());
+        studentRequestMethodToHandlerMap.put("POST", new StudentCreateRequestHandler());
         studentRequestMethodToHandlerMap.put("GET", new StudentGetRequestHandler());
         studentRequestMethodToHandlerMap.put("DELETE", new StudentDeleteRequestHandler());
     }
