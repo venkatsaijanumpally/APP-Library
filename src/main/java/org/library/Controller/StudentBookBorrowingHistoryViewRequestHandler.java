@@ -14,7 +14,7 @@ public class StudentBookBorrowingHistoryViewRequestHandler implements HttpHandle
         Iterable<BookBorrow> bookBorrowIterable=BookBorrow.getBookBorrowRecords();
         BaseMarshalling<BookBorrow> bs= new BaseMarshalling<>();
         exchange.getResponseHeaders().set("Content-Type","application/json");
-        exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowIterable, "Records"));
+        exchange.sendResponseHeaders(200, bs.getResponseLength(bookBorrowIterable, "Record"));
         OutputStream os=bs.getOutputStream(exchange.getResponseBody());
         os.flush();
         exchange.close();
