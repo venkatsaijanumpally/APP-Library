@@ -114,6 +114,7 @@ public class Student {
         Iterable<BookBorrow> records=Database.allBorrowedBookRecordsOfAStudent(id);
         PricingStrategy pricingStrategy=Catalog.getPricingStrategy();
         Date dateAfter=new Date(System.currentTimeMillis());
+        int initialDue=due_amount;
         int due=0;
         for(BookBorrow record: records){
             Date dateBefore=record.getEndDate();
@@ -126,5 +127,7 @@ public class Student {
             }
         }
         due_amount=pricingStrategy.getPerDayCost()*due;
+        if(initialDue!=due_amount)
+            Database.updateStudentDue(this);
     }
 }
